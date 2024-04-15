@@ -58,8 +58,8 @@ void draw_polygon(const std::vector<float> &polygon_xy,
           float(iw) + 0.5f; // x-coordinate of the center of the pixel
       const auto y =
           float(ih) + 0.5f; // y-coordinate of the center of the pixel
-      const unsigned int num_vtx = polygon_xy.size() / 2;
-      float winding_number = 0.0;
+      const auto num_vtx = polygon_xy.size() / 2;
+      auto winding_number = 0.0;
       for (unsigned int iedge = 0; iedge < num_vtx; ++iedge) {
         auto i0_vtx = iedge;
         auto i1_vtx = (iedge + 1) % num_vtx;
