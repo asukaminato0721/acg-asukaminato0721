@@ -111,7 +111,7 @@ void dda_line(float x0, float y0, float x1, float y1,
 
   while (i <= step) {
     std::cout << 'x' <<  x << " y:" << y << std::endl;
-    img_data.at(std::round(y) * width + std::round(x)) = brightness;
+    img_data.at(std::floor(y) * width + std::floor(x)) = brightness;
     x = x + dx;
     y = y + dy;
     i = i + 1;
