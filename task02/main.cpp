@@ -76,21 +76,21 @@ int number_of_intersection_ray_against_quadratic_bezier(
  {x2,y2}=={xo,yo}+s*{xd,yd},{s,t}] // CForm
   */
   // use double or picture will go wrong. :(
-    // main idea: solve out the s and t, check s and t are in range, a.k.a valid.
+  // main idea: solve out the s and t, check s and t are in range, a.k.a valid.
 
-  auto Power = [&](double x, auto p) -> double { return x * x; };
-  auto Sqrt = [&](double x) -> double { return std::sqrt(x); };
-  double x0 = ps.x();
-  double y0 = ps.y();
-  double x1 = pc.x();
-  double y1 = pc.y();
-  double x2 = pe.x();
-  double y2 = pe.y();
-  double xd = dir.x();
-  double yd = dir.y();
-  double xo = org.x();
-  double yo = org.y();
-  double s1 =
+  const auto Power = [&](double x, auto p) -> double { return x * x; };
+  const auto Sqrt = [&](double x) -> double { return std::sqrt(x); };
+  const double x0 = ps.x();
+  const double y0 = ps.y();
+  const double x1 = pc.x();
+  const double y1 = pc.y();
+  const double x2 = pe.x();
+  const double y2 = pe.y();
+  const double xd = dir.x();
+  const double yd = dir.y();
+  const double xo = org.x();
+  const double yo = org.y();
+  const double s1 =
       (2 * x1 * y0 - x2 * y0 - xo * y0 - 2 * x0 * y1 + 2 * xo * y1 + x0 * y2 -
        xo * y2 -
        (2 * x1 * xd * Power(y0, 2)) /
@@ -182,7 +182,7 @@ int number_of_intersection_ray_against_quadratic_bezier(
            (xd * y0 - 2 * xd * y1 + xd * y2 - x0 * yd + 2 * x1 * yd -
             x2 * yd)) /
       (xd * y0 - 2 * xd * y1 + xd * y2 - x0 * yd + 2 * x1 * yd - x2 * yd);
-  double t1 =
+  const double t1 =
       (2 * xd * y0 - 2 * xd * y1 - 2 * x0 * yd + 2 * x1 * yd -
        Sqrt(Power(-2 * xd * y0 + 2 * xd * y1 + 2 * x0 * yd - 2 * x1 * yd, 2) -
             4 *
@@ -192,7 +192,7 @@ int number_of_intersection_ray_against_quadratic_bezier(
       (2. *
        (xd * y0 - 2 * xd * y1 + xd * y2 - x0 * yd + 2 * x1 * yd - x2 * yd));
 
-  double s2 =
+  const double s2 =
       (2 * x1 * y0 - x2 * y0 - xo * y0 - 2 * x0 * y1 + 2 * xo * y1 + x0 * y2 -
        xo * y2 -
        (2 * x1 * xd * Power(y0, 2)) /
@@ -284,7 +284,7 @@ int number_of_intersection_ray_against_quadratic_bezier(
            (xd * y0 - 2 * xd * y1 + xd * y2 - x0 * yd + 2 * x1 * yd -
             x2 * yd)) /
       (xd * y0 - 2 * xd * y1 + xd * y2 - x0 * yd + 2 * x1 * yd - x2 * yd);
-  double t2 =
+  const double t2 =
       (2 * xd * y0 - 2 * xd * y1 - 2 * x0 * yd + 2 * x1 * yd +
        Sqrt(Power(-2 * xd * y0 + 2 * xd * y1 + 2 * x0 * yd - 2 * x1 * yd, 2) -
             4 *
