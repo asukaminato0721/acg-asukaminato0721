@@ -1,5 +1,7 @@
 #include <cmath>
+#include <cstdlib>
 #include <filesystem>
+#include <limits>
 #include <tuple>
 #include <utility>
 // #include <experimental/filesystem> // uncomment here if the <filesystem>
@@ -293,7 +295,9 @@ int number_of_intersection_ray_against_quadratic_bezier(
                 (xd * y0 - x0 * yd + xo * yd - xd * yo))) /
       (2. *
        (xd * y0 - 2 * xd * y1 + xd * y2 - x0 * yd + 2 * x1 * yd - x2 * yd));
-
+  if (std::abs(t1 - t2) < std::numeric_limits<double>::min()) {
+    return (s1 >= 0 && 0 <= t1 && t1 <= 1);
+  }
   return (s1 >= 0 && 0 <= t1 && t1 <= 1) + (s2 >= 0 && 0 <= t2 && t2 <= 1);
 }
 
