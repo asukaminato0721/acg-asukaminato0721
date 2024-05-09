@@ -1,7 +1,9 @@
+#include <cmath>
 #include <iostream>
 #include <cassert>
 #include <filesystem>
 // #include <experimental/filesystem> // uncomment here if the <filesystem> cannot be included above
+#include <tuple>
 #include <vector>
 //
 #define STB_IMAGE_WRITE_IMPLEMENTATION
@@ -68,7 +70,12 @@ void draw_3d_triangle_with_texture(
       // Compute the barycentric coordinate ***on the 3d triangle** below that gives the correct texture mapping.
       // (Hint: formulate a linear system with 4x4 coefficient matrix and solve it to get the barycentric coordinate)
       Eigen::Matrix4f coeff;
-      Eigen::Vector4f rhs;
+      // Perspective-Correct Interpolation
+      // https://blog.csdn.net/weixin_41885426/article/details/105540713
+      bc[0] /= q0[3];
+      bc[1] /= q1[3];
+      bc[2] /= q2[3];
+      bc /= bc.sum();
 
       // do not change below
       auto uv = uv0 * bc[0] + uv1 * bc[1] + uv2 * bc[2]; // uv coordinate of the pixel

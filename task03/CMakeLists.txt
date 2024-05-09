@@ -25,7 +25,7 @@ include_directories(
     ${PROJECT_SOURCE_DIR}/../external
     ${PROJECT_SOURCE_DIR}/../external/eigen
 )
-
+add_compile_options(-g)
 add_executable(${PROJECT_NAME}
     main.cpp
 )
