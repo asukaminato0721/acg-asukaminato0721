@@ -24,9 +24,10 @@ void main()
         // make sure the occlusion is correctly computed.
         // the mirror is behind the armadillo, so the reflected image should be behind the armadillo.
         // furthermore, make sure the occlusion is correctly computed for the reflected image.
-        //x0 = ???
-        //y0 = ???
-        //z0 = ???
+        // by mathematica {x0,y0,z0}//ReflectionTransform[{2/5,0,1},{-3/10,0,-1/2}]
+        x0 = -62.0/145.0 + (21.0*x0)/29.0 - (20.0*z0)/29.0;
+        y0 = y0;
+        z0 = -31.0/29.0 - (20.0*x0)/29.0 - (21.0*z0)/29.0;
     }
     // do not edit below
 
