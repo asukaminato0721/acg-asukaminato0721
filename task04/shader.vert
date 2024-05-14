@@ -8,13 +8,13 @@ varying vec3 normal; // normal vector pass to the rasterizer and fragment shader
 
 void main()
 {
-    normal = vec3(gl_Normal);// set normal and pass it to fragment shader
+    normal = vec3(gl_Normal); // set normal and pass it to fragment shader
 
     // "gl_Vertex" is the *input* vertex coordinate of triangle.
     // "gl_Vertex" has type of "vec4", which is homogeneious coordinate
-    float x0 = gl_Vertex.x/gl_Vertex.w;// x-coord
-    float y0 = gl_Vertex.y/gl_Vertex.w;// y-coord
-    float z0 = gl_Vertex.z/gl_Vertex.w;// z-coord
+    float x0 = gl_Vertex.x / gl_Vertex.w; // x-coord
+    float y0 = gl_Vertex.y / gl_Vertex.w; // y-coord
+    float z0 = gl_Vertex.z / gl_Vertex.w; // z-coord
     if (is_reflection) {
         vec3 nrm = normalize(vec3(0.4, 0.0, 1.0)); // normal of the mirror
         vec3 org = vec3(-0.3, 0.0, -0.5); // point on the mirror
@@ -24,14 +24,20 @@ void main()
         // make sure the occlusion is correctly computed.
         // the mirror is behind the armadillo, so the reflected image should be behind the armadillo.
         // furthermore, make sure the occlusion is correctly computed for the reflected image.
-        // by mathematica {x0,y0,z0}//ReflectionTransform[{2/5,0,1},{-3/10,0,-1/2}]
-        x0 = -62.0/145.0 + (21.0*x0)/29.0 - (20.0*z0)/29.0;
+        // by mathematica {x0,y0,z0}//ReflectionTransform[{a,b,c},{d,e,f}] // ComplexExpand // FullSimplify[#, (a^2 + b^2 + c^2) == 1]&
+        float a = nrm.x;
+        float b = nrm.y;
+        float c = nrm.z;
+        float d = org.x;
+        float e = org.y;
+        float f = org.z;
+        x0 = -x0 + 2 * (d + b * b * (-d + x0) + c * c * (-d + x0) + a * b * (e - y0) + a * c * (f - z0));
         y0 = y0;
-        z0 = -31.0/29.0 - (20.0*x0)/29.0 - (21.0*z0)/29.0;
+        z0 = 2 * c * (a * (d - x0) + b * (e - y0) + c * (f - z0)) + z0;
     }
     // do not edit below
 
     // "gl_Position" is the *output* vertex coordinate in the
     // "canonical view volume (i.e.. [-1,+1]^3)" pass to the rasterizer.
-    gl_Position = vec4(x0, y0, -z0, 1);// opengl actually draw a pixel with *maximum* depth. so invert z
+    gl_Position = vec4(x0, y0, -z0, 1); // opengl actually draw a pixel with *maximum* depth. so invert z
 }
