@@ -25,7 +25,11 @@ float sdSphere( vec3 p, float s )
 {
   return length(p)-s;
 }
-
+// code from: https://iquilezles.org/articles/distfunctions/
+float opSubtraction( float d1, float d2 )
+{
+    return max(-d1,d2);
+}
 // here is the parameter use to draw the objects
 float len_cylinder = 0.8; // length of the cylinder
 float rad_cylinder = 0.45; // radius of the cylinder
@@ -37,6 +41,11 @@ float SDF(vec3 pos)
 {
   float d0 = sdCappedCylinder(pos, len_cylinder, rad_cylinder);
   // write some code to combine the signed distance fields above to design the object described in the README.md
+  float pos_1_d0 = sdCappedCylinder(vec3(pos.y, pos.x, pos.z), len_cylinder, rad_cylinder);
+  float pos_2_d0 = sdCappedCylinder(vec3(pos.x, pos.z, pos.y), len_cylinder, rad_cylinder);
+  float right = min(min(d0, pos_1_d0), pos_2_d0);
+  float left = max(sdBox(pos, vec3(box_size, box_size, box_size)), sdSphere(pos, rad_sphere));
+  return opSubtraction(right,left);
   return d0; // comment out and define new distance
 }
 
@@ -44,6 +53,12 @@ float SDF(vec3 pos)
 vec3 SDF_color(vec3 pos)
 {
   // write some code below to return color (RGB from 0 to 1) to paint the object describe in README.md
+  if(sdBox(pos, vec3(box_size, box_size, box_size)) >= 0){
+    return vec3(1., 0., 0.);
+  }
+  if(sdSphere(pos, rad_sphere) >= 0){
+    return vec3(0.,0.,1.);
+  }
   return vec3(0., 1., 0.); // comment out and define new color
 }
 
