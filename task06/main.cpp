@@ -123,11 +123,47 @@ void search_collision_in_bvh(
   if (bvhnodes[i_bvhnode].is_leaf()) { // this is leaf node
     const unsigned int i_tri = bvhnodes[i_bvhnode].i_node_left;
     // do something
+    const auto res = ray_triangle_intersection(ray_org, ray_dir, i_tri, tri2vtx, vtx2xyz);
+    if (!res) { return; }
+    const auto& [q0,n0] = res.value();
+    const float depth = (q0 - ray_org).dot(ray_dir);
+    if (hit_depth > depth) {
+      is_hit = true;
+      hit_depth = depth;
+      hit_pos = q0;
+      hit_normal = n0;
+    }
   } else { // this is branch node
     unsigned int i_node_right = bvhnodes[i_bvhnode].i_node_right;
     unsigned int i_node_left =bvhnodes[i_bvhnode].i_node_left;
+    if(bvhnodes[i_node_right].intersect_bv(ray_org, ray_dir)){
+       search_collision_in_bvh(
+    is_hit,
+    hit_depth,
+    hit_pos,
+    hit_normal,
+    i_node_right,
+    ray_org,
+    ray_dir,
+    tri2vtx,
+    vtx2xyz,
+    bvhnodes);
+    }
     // do something (hint recursion)
+   if(bvhnodes[i_node_left].intersect_bv(ray_org, ray_dir)){
+      search_collision_in_bvh(
+    is_hit,
+    hit_depth,
+    hit_pos,
+    hit_normal,
+    i_node_left,
+    ray_org,
+    ray_dir,
+    tri2vtx,
+    vtx2xyz,
+    bvhnodes);
   }
+}
 }
 
 auto find_intersection_between_ray_and_triangle_mesh(
@@ -143,18 +179,18 @@ auto find_intersection_between_ray_and_triangle_mesh(
   Eigen::Vector3f hit_normal;
 
   // for Problem 2,3,4, comment out from here
-  for (unsigned int i_tri = 0; i_tri < tri2vtx.rows(); ++i_tri) {
-    const auto res = ray_triangle_intersection(ray_org, ray_dir, i_tri, tri2vtx, vtx2xyz);
-    if (!res) { continue; }
-    const auto& [q0,n0] = res.value();
-    const float depth = (q0 - ray_org).dot(ray_dir);
-    if (hit_depth > depth) {
-      is_hit = true;
-      hit_depth = depth;
-      hit_pos = q0;
-      hit_normal = n0;
-    }
-  }
+  // for (unsigned int i_tri = 0; i_tri < tri2vtx.rows(); ++i_tri) {
+  //   const auto res = ray_triangle_intersection(ray_org, ray_dir, i_tri, tri2vtx, vtx2xyz);
+  //   if (!res) { continue; }
+  //   const auto& [q0,n0] = res.value();
+  //   const float depth = (q0 - ray_org).dot(ray_dir);
+  //   if (hit_depth > depth) {
+  //     is_hit = true;
+  //     hit_depth = depth;
+  //     hit_pos = q0;
+  //     hit_normal = n0;
+  //   }
+  // }
   // comment out end
 
   // do not edit from here
@@ -208,7 +244,7 @@ int main() {
         img_data_nrm[(ih * img_width + iw) * 3 + 1] = nrm.y() * 0.5f + 0.5f;
         img_data_nrm[(ih * img_width + iw) * 3 + 2] = nrm.z() * 0.5f + 0.5f;
       }
-      continue; // comment out here for Problem 3,4
+      // continue; // comment out here for Problem 3,4
       //
       if (res) { // ambient occlusion computation
         const unsigned int num_sample_ao = 100;
