@@ -15,6 +15,9 @@
 #define M_PI 3.14159265358979323846
 #endif
 
+#include <random>
+std::mt19937 rndeng(std::random_device{}());
+
 /**
  * Rotation matrix such that z-axis will be direction of `nrm`
  * @param nrm transfromed z-axis
@@ -37,7 +40,9 @@ auto local_to_world_vector_transformation(
  */
 auto sample_hemisphere(
     const Eigen::Vector3f &nrm) -> std::pair<Eigen::Vector3f, float> {
-  const auto unirand = Eigen::Vector2f::Random() * 0.5f + Eigen::Vector2f(0.5, 0.5);
+    // const auto unirand = Eigen::Vector2f::Random() * 0.5f + Eigen::Vector2f(0.5, 0.5);
+  auto dist_01 = std::uniform_real_distribution<float>(0.f, 1.f);
+  const auto unirand = Eigen::Vector2f(dist_01(rndeng),dist_01(rndeng));
   const float phi = 2.f * float(M_PI) * unirand.y();
 
   // the code to uniformly sample hemisphere (z-up)
@@ -51,7 +56,7 @@ auto sample_hemisphere(
 
   // For Problem 4, write some code below to sample hemisphere with cosign weight
   // (i.e., the sampling frequency is higher at the top)
-
+  pdf = nrm.dot(dir_loc) / float(M_PI);
 
   // end of Problem 4. Do not modify the two lines below
   const auto dir_out = local_to_world_vector_transformation(nrm) * dir_loc; // rotate the sample (zup -> nrm)
@@ -256,7 +261,8 @@ int main() {
           const auto res1 = find_intersection_between_ray_and_triangle_mesh(
               pos0, dir, tri2vtx, vtx2xyz, bvhnodes);
           if (!res1) { // if the ray doe not hit anything
-            sum += 1.f; // Problem 3: This is a bug. write some correct code (hint: use `dir.dot(nrm)`, `pdf`, `M_PI`).
+            //sum += 1.f; // Problem 3: This is a bug. write some correct code (hint: use `dir.dot(nrm)`, `pdf`, `M_PI`).
+            sum += dir.dot(nrm) / (pdf * float(M_PI)); // accumulate contribution
           }
         }
         img_data_ao[ih * img_width + iw] = sum / float(num_sample_ao); // do not change
@@ -284,7 +290,7 @@ int main() {
       img_data_uchar[i] = static_cast<unsigned char>(img_data_ao[i] * 255.f);
     }
     stbi_write_png(
-        (std::filesystem::path(PROJECT_SOURCE_DIR) / "ao.png").string().c_str(),
+        (std::filesystem::path(PROJECT_SOURCE_DIR) / "ao_cosweight.png").string().c_str(),
         img_width, img_height, 1, img_data_uchar.data(), 0);
   }
 }
