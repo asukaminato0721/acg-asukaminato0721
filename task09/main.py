@@ -1,15 +1,20 @@
 import os
 import math
+from typing import Callable
 
 import numpy
 #
+import numpy.typing
 import pyrr
 import numpy as np
 import moderngl
 import moderngl_window as mglw
 from PIL import Image, ImageOps
 from scipy import sparse
+import scipy
+import scipy.sparse
 from scipy.sparse.linalg import spsolve
+import scipy.sparse.linalg
 #
 import util_for_task09
 
@@ -138,6 +143,12 @@ class HelloWorld(mglw.WindowConfig):
         # L is the graph Laplacian matrix a.k.a `self.matrix_laplace`
         # you may use `spsolve` to solve the liner system
         # spsolve: https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.linalg.spsolve.html#scipy.sparse.linalg.spsolve
+        D = self.matrix_fix
+        L = self.matrix_laplace
+        # 2 d (x-xdef)+2 l (x-xini) == 0
+        #  d x+ l x- d xdef- l xini == 0
+        # (d + l) x  == d xdef + l xini
+        self.vtx2xyz_def[:] = scipy.sparse.linalg.spsolve(D + L ** 2, D @ self.vtx2xyz_def + L ** 2 @ self.vtx2xyz_ini).copy(order='C')                      
 
 
         # do not edit beyond here
